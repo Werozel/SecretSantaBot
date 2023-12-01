@@ -15,7 +15,7 @@ async def __show_players(update: Update, _):
     if not waiting_players:
         await update.message.reply_text(NO_PLAYERS_YET)
         return
-    await update.message.reply_text("\n".join(map(lambda x: x.nickname, waiting_players)))
+    await update.message.reply_text("\n".join(map(lambda x: f"{x.nickname}(@{x.username})", waiting_players)))
 
 
 showPlayersHandler = CommandHandler("players", __show_players)

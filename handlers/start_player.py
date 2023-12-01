@@ -12,7 +12,7 @@ async def __start_player(update: Update, _):
         await update.message.reply_text(ALREADY_STARTED)
         return
 
-    player = Player(player_id, player_name)
+    player = Player(player_id, player_name, update.effective_user.username)
     StateOfPlay.add_player(player)
     StateOfPlay.save_to_json()
     await update.message.reply_text(START_PLAYER)

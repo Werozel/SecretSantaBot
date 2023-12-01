@@ -17,6 +17,7 @@ class Player:
             self,
             player_id: int,
             actual_name: str,
+            username: str,
             nickname: Optional[str] = None,
             wishlist: Optional[str] = None,
             target_player_id: Optional[int] = None,
@@ -24,6 +25,7 @@ class Player:
     ):
         self.player_id: int = player_id
         self.actual_name: str = actual_name
+        self.username: str = username
         self.nickname: Optional[str] = nickname
         self.wishlist: Optional[str] = wishlist
         self.target_player_id: Optional[int] = target_player_id
@@ -67,6 +69,7 @@ class Player:
         return {
             "player_id": self.player_id,
             "actual_name": self.actual_name,
+            "username": self.username,
             "nickname": self.nickname,
             "wishlist": self.wishlist,
             "target_player_id": self.target_player_id,
@@ -78,6 +81,7 @@ class Player:
         return Player(
             obj["player_id"],
             obj["actual_name"],
+            obj["username"],
             obj.get("nickname", None),
             obj.get("wishlist", None),
             obj.get("target_player_id", None),
