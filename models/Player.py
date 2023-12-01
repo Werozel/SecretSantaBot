@@ -60,10 +60,10 @@ class Player:
         self.state = PlayerStateEnum.ENDED_GAME
 
     def __repr__(self):
-        return f"{self.nickname}({self.actual_name})"
+        return f"{self.nickname} (@{self.username})"
 
     def __str__(self):
-        return f"{self.nickname}({self.actual_name})"
+        return f"{self.nickname} (@{self.username})"
 
     def to_json(self) -> dict:
         return {

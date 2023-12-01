@@ -1,11 +1,15 @@
 from telegram import Update
-from telegram.ext import CommandHandler, ApplicationBuilder
-from config import API_TOKEN, ADMIN_ID
-from handlers.genetic_text_message_handler import genericTextMessageHandler
-from handlers.start_player import startPlayerHandler
-from handlers.show_wishlist import showWishlistHandler
-from handlers.show_players import showPlayersHandler
+from telegram.ext import CommandHandler, ApplicationBuilder, ContextTypes
+
+from config import API_TOKEN, ADMIN_ID, GAME_ADMIN_ID
 from globals import StateOfPlay
+from handlers.genetic_text_message_handler import genericTextMessageHandler
+from handlers.select_nickname import select_nickname
+from handlers.show_players import showPlayersHandler
+from handlers.show_wishlist import showWishlistHandler
+from handlers.start_player import startPlayerHandler
+from models.Player import PlayerStateEnum
+from strings import UNKNOWN_USER, WISHLIST_SET_TOO_EARLY, SELECT_WISHLIST
 
 
 async def checkState(update: Update, _) -> None:
@@ -35,6 +39,54 @@ async def clearGame(update: Update, _) -> None:
     await update.message.reply_text("Готово")
 
 
+async def show_status(update: Update, _):
+    if update.effective_user.id not in [ADMIN_ID, GAME_ADMIN_ID]:
+        return
+    text = ""
+    for player in StateOfPlay.players.values():
+        text += f"{str(player)} - {player.state.value}\n"
+    await update.message.reply_text(text)
+
+
+async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id not in [ADMIN_ID, GAME_ADMIN_ID]:
+        return
+
+    ids = list(
+        map(
+            lambda x: x.player_id,
+            StateOfPlay.players.values()
+        )
+    )
+
+    for player_id in ids:
+        await context.bot.send_message(player_id, " ".join(context.args))
+
+
+async def change_nickname(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    player = StateOfPlay.get_player_by_id(update.effective_user.id)
+    if player is None:
+        await update.message.reply_text(UNKNOWN_USER)
+        return
+
+    await select_nickname(update, player, " ".join(context.args))
+
+
+async def change_wishlist(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    player = StateOfPlay.get_player_by_id(update.effective_user.id)
+    if player is None:
+        await update.message.reply_text(UNKNOWN_USER)
+        return
+
+    current_state = player.state
+    if current_state == PlayerStateEnum.SELECTING_NICKNAME:
+        await update.message.reply_text(WISHLIST_SET_TOO_EARLY)
+        return
+
+    player.state = PlayerStateEnum.CHOOSING_WISHLIST
+    await update.message.reply_text(SELECT_WISHLIST)
+
+
 if __name__ == "__main__":
     try:
         StateOfPlay.load_from_json()
@@ -42,13 +94,19 @@ if __name__ == "__main__":
         pass
     app = ApplicationBuilder().token(API_TOKEN).build()
 
-    # TODO: @Werozel admin commands
+    # Аdmin commands
     app.add_handler(CommandHandler("check", checkState))
     app.add_handler(CommandHandler("dump", dumpGame))
     app.add_handler(CommandHandler("load", loadGame))
     app.add_handler(CommandHandler("clear", clearGame))
 
+    # Game admin commands
+    app.add_handler(CommandHandler("status", show_status))
+    app.add_handler(CommandHandler("broadcast", broadcast))
+
     # Player commands
+    app.add_handler(CommandHandler("change_nickname", change_nickname))
+    app.add_handler(CommandHandler("change_wishlist", change_wishlist))
     app.add_handler(startPlayerHandler)
     app.add_handler(showWishlistHandler)
     app.add_handler(showPlayersHandler)
