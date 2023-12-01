@@ -11,6 +11,7 @@ async def __start_player(update: Update, _):
     if StateOfPlay.get_player_by_id(player_id) is not None:
         await update.message.reply_text(ALREADY_STARTED)
         return
+
     player = Player(player_id, player_name)
     StateOfPlay.add_player(player)
     StateOfPlay.save_to_json()

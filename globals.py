@@ -44,3 +44,4 @@ class StateOfPlay:
             )
             for player in players:
                 StateOfPlay.add_player(player)
+

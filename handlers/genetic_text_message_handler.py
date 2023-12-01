@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.ext import MessageHandler, filters
-from strings import WISHLIST_SELECTED, UNKNOWN_USER
+from strings import NOT_ALLOWED_MESSAGE, UNKNOWN_USER
 from globals import StateOfPlay
 from models.Player import PlayerStateEnum
 from handlers.select_nickname import select_nickname
@@ -12,6 +12,11 @@ async def __generic_text_message(update: Update, _):
     player = StateOfPlay.get_player_by_id(player_id)
     if player is None:
         await update.message.reply_text(UNKNOWN_USER)
+        return
+
+    message = update.message.text
+    if message.startswith("/"):
+        await update.message.reply_text(NOT_ALLOWED_MESSAGE)
         return
 
     if player.state == PlayerStateEnum.SELECTING_NICKNAME:

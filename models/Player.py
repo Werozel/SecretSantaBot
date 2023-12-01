@@ -81,5 +81,5 @@ class Player:
             obj.get("nickname", None),
             obj.get("wishlist", None),
             obj.get("target_player_id", None),
-            obj.get("state", None),
+            PlayerStateEnum(obj.get("state", None)),
         )
