@@ -44,18 +44,20 @@ async def clearGame(update: Update, _) -> None:
 
 
 async def show_status(update: Update, _):
-    if update.effective_user.id not in [ADMIN_ID, GAME_ADMIN_ID]:
+    current_user_id = update.effective_user.id
+    if current_user_id not in [ADMIN_ID, GAME_ADMIN_ID]:
         return
     text = ""
     for player in StateOfPlay.players.values():
         text += f"{str(player)} - {player.state.value}\n"
 
-    text += "\n"
+    if current_user_id == ADMIN_ID:
+        text += "\n"
 
-    for player in StateOfPlay.players.values():
-        # TODO: @Werozel handle None
-        target_player = StateOfPlay.get_player_by_id(player.target_player_id)
-        text += f"{str(player)} -> {str(target_player)}\n"
+        for player in StateOfPlay.players.values():
+            # TODO: @Werozel handle None
+            target_player = StateOfPlay.get_player_by_id(player.target_player_id)
+            text += f"{str(player)} -> {str(target_player)}\n"
 
     await update.message.reply_text(text)
 
