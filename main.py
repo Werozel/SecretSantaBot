@@ -36,8 +36,10 @@ async def clearGame(update: Update, _) -> None:
 
 
 if __name__ == "__main__":
-    # TODO: @Werozel uncomment
-    StateOfPlay.load_from_json()
+    try:
+        StateOfPlay.load_from_json()
+    except:
+        pass
     app = ApplicationBuilder().token(API_TOKEN).build()
 
     # TODO: @Werozel admin commands
