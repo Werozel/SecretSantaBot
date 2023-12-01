@@ -58,6 +58,7 @@ class Player:
 
     def end_game(self):
         self.state = PlayerStateEnum.ENDED_GAME
+        self.target_player_id = None
 
     def __repr__(self):
         return f"{self.nickname} (@{self.username})"

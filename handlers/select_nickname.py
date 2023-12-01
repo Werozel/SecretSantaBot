@@ -8,7 +8,7 @@ from config import DIMAS_ID
 
 
 async def select_nickname(update: Update, player: Player, new_nickname: str):
-    if new_nickname.isspace() or new_nickname.startswith("/"):
+    if new_nickname.isspace() or new_nickname.startswith("/") or not new_nickname:
         await update.message.reply_text(INCORRECT_NICKNAME)
         return
 

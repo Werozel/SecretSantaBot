@@ -1,15 +1,19 @@
+import random
+
 from telegram import Update
 from telegram.ext import CommandHandler, ApplicationBuilder, ContextTypes
 
 from config import API_TOKEN, ADMIN_ID, GAME_ADMIN_ID
 from globals import StateOfPlay
+from handlers.end_game_handler import endGameHandler
 from handlers.genetic_text_message_handler import genericTextMessageHandler
 from handlers.select_nickname import select_nickname
 from handlers.show_players import showPlayersHandler
 from handlers.show_wishlist import showWishlistHandler
+from handlers.start_game_handler import startGameHandler
 from handlers.start_player import startPlayerHandler
 from models.Player import PlayerStateEnum
-from strings import UNKNOWN_USER, WISHLIST_SET_TOO_EARLY, SELECT_WISHLIST
+from strings import UNKNOWN_USER, WISHLIST_SET_TOO_EARLY, SELECT_WISHLIST, WISHLIST_SET_TOO_LATE, ANEKI
 
 
 async def checkState(update: Update, _) -> None:
@@ -45,6 +49,14 @@ async def show_status(update: Update, _):
     text = ""
     for player in StateOfPlay.players.values():
         text += f"{str(player)} - {player.state.value}\n"
+
+    text += "\n"
+
+    for player in StateOfPlay.players.values():
+        # TODO: @Werozel handle None
+        target_player = StateOfPlay.get_player_by_id(player.target_player_id)
+        text += f"{str(player)} -> {str(target_player)}\n"
+
     await update.message.reply_text(text)
 
 
@@ -82,9 +94,16 @@ async def change_wishlist(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if current_state == PlayerStateEnum.SELECTING_NICKNAME:
         await update.message.reply_text(WISHLIST_SET_TOO_EARLY)
         return
+    elif current_state == PlayerStateEnum.ASSIGNED_TARGET:
+        await update.message.reply_text(WISHLIST_SET_TOO_LATE)
+        return
 
     player.state = PlayerStateEnum.CHOOSING_WISHLIST
     await update.message.reply_text(SELECT_WISHLIST)
+
+
+async def send_anek(update: Update, _):
+    await update.message.reply_text(random.choice(ANEKI))
 
 
 if __name__ == "__main__":
@@ -101,10 +120,13 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("clear", clearGame))
 
     # Game admin commands
+    app.add_handler(startGameHandler)
+    app.add_handler(endGameHandler)
     app.add_handler(CommandHandler("status", show_status))
     app.add_handler(CommandHandler("broadcast", broadcast))
 
     # Player commands
+    app.add_handler(CommandHandler("anek", send_anek))
     app.add_handler(CommandHandler("change_nickname", change_nickname))
     app.add_handler(CommandHandler("change_wishlist", change_wishlist))
     app.add_handler(startPlayerHandler)
