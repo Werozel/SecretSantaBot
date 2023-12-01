@@ -8,7 +8,9 @@ from globals import StateOfPlay
 async def __show_players(update: Update, _):
     waiting_players = []
     for player in StateOfPlay.players.values():
-        if player.state == PlayerStateEnum.WAITING_FOR_START or player.state == PlayerStateEnum.ASSIGNED_TARGET:
+        if (player.state == PlayerStateEnum.CHOOSING_WISHLIST or
+                player.state == PlayerStateEnum.WAITING_FOR_START or
+                player.state == PlayerStateEnum.ASSIGNED_TARGET):
             waiting_players.append(player)
     if not waiting_players:
         await update.message.reply_text(NO_PLAYERS_YET)
