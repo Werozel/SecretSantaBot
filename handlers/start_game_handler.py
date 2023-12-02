@@ -50,7 +50,11 @@ async def __start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     for player in players_without_target:
         target_player_id = player.player_id
-        while target_player_id == player.player_id:
+        while ((target_player_id == player.player_id) or
+               (player.username == "eugen_gurov" and target_player_id in [ADMIN_ID, GAME_ADMIN_ID]) or
+               (player.player_id == ADMIN_ID and target_player_id == GAME_ADMIN_ID) or
+               (player.player_id == GAME_ADMIN_ID and target_player_id == ADMIN_ID)
+        ):
             target_player_id = random.choice(player_ids_to_select_from)
         player.assign_target(target_player_id)
         player_ids_to_select_from.remove(target_player_id)
