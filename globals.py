@@ -16,6 +16,13 @@ class StateOfPlay:
         return StateOfPlay.players.get(player_id, None)
 
     @staticmethod
+    def get_santa_of_player(player_id: int) -> Optional[Player]:
+        for player in StateOfPlay.players.values():
+            if player.target_player_id == player_id:
+                return player
+        return None
+
+    @staticmethod
     def get_player_by_username(username: str) -> Optional[Player]:
         for player in StateOfPlay.players.values():
             if player.username == username:

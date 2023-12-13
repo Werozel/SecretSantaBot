@@ -18,8 +18,10 @@ def NICK_SELECTED(nickname: str) -> str:
 SELECT_WISHLIST = "Выбирай че дарить"
 WISHLIST_SELECTED = "Кринжанул, спасибо. Теперь жди начала игры, а пока лови юмореску"
 WISHLIST_SET_TOO_EARLY = "Сначала скажи как звать, вишлист сразу после этого"
-WISHLIST_SET_TOO_LATE = "Игра уже идет, поздно менять вишлист. Но если сильно нужно - напиши @KhGleb"
+WISHLIST_WILL_BE_SENT_TO_SANTA = "Теперь пиши новый вишлист, он будет отправлен твоему санте, если не хочешь ничего менять напиши \"Отмена\""
 NO_WISHLIST_YET = "Кажется у тебя не вишлиста"
+TARGET_WISHLIST_CHANGED = "Тот кому ты даришь изменил вишлист! Вот новый:"
+CANCEL_WISHLIST_EDITING = "Отменил, все норм, вишлись не поменялся"
 
 NO_PLAYERS_YET = "Кажется еще никто не зарегался, начни сам: /start"
 
@@ -30,6 +32,9 @@ def ASSIGN_PLAYER(target_player: str) -> str:
     return f"Тайный сас начался, ты даришь подарок игроку \"{target_player}\". Его вишлист:"
 EMPTY_WISHLIST = "Кажется он не заполнил вишлист, не повезло, можно в лс спросить"
 
+def REQUESTED_NEW_WISHLIST(target_player: str) -> str:
+    return f"Попросил у {target_player} дополнить вишлист"
+REQUEST_TO_UPDATE_WISHLIST = "Твой санта не может определиться, помоги ему и обнови вишлист с помощью /change_wishlist (новый вишлист будет заново отправлен санте)"
 
 ANEKI = [
     """Рабинович продаёт на Привозе арбузы под табличкой "Один арбуз - 3 рубля. Три арбуза - 10 рублей".
